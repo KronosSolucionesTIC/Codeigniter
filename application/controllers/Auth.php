@@ -52,11 +52,25 @@ class Auth extends CI_Controller
 
             if (!$user) {
                 $this->session->set_flashdata("mensaje_error", "Datos de usuario incorrecto");
-                print_r("Email incorrecto");
-            } else {
-                print_r("Email correcto");
+                redirect(base_url() . 'Login');
             }
+            if ($user->pass != sha1(md5($pass))) {
+                $this->session->set_flashdata("mensaje_error", "Datos de usuario incorrecto");
+                redirect(base_url() . 'Login');
+            }
+
+            $_SESSION["userId"]       = $user->idUser;
+            $_SESSION["email"]        = $user->email;
+            $_SESSION["is_logged_in"] = true;
+            $this->session->set_flashdata("mensaje_success", "Bienvenido " . $_SESSION["email"]);
+            redirect(base_url());
         }
+    }
+
+    public function logout()
+    {
+        session_start();
+        session_destroy();
     }
 
 }
